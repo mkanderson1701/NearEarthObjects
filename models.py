@@ -37,6 +37,12 @@ class NearEarthObject:
     def __init__(self, **info):
         """Create a new `NearEarthObject`.
 
+        required params
+        pdes (str)
+        name (str)
+        pha (bool)
+
+
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
         # TODO: Assign information from the arguments passed to the constructor
@@ -44,10 +50,13 @@ class NearEarthObject:
         # You should coerce these values to their appropriate data type and
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
-        self.designation = ''
-        self.name = None
-        self.diameter = float('nan')
-        self.hazardous = False
+        self.designation = info['pdes'].strip()
+        self.name = info['name'].strip()
+        if 'diameter' in info:
+            self.diameter = info['diameter']
+        else:
+            self.diameter = float('nan')
+        self.hazardous = bool(info[pha])
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -56,14 +65,15 @@ class NearEarthObject:
     def fullname(self):
         """Return a representation of the full name of this NEO."""
         # TODO: Use self.designation and self.name to build a fullname for this object.
-        return ''
+        return f'{self.designation}: {self.name}'
 
     def __str__(self):
         """Return `str(self)`."""
         # TODO: Use this object's attributes to return a human-readable string representation.
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
-        return f"A NearEarthObject ..."
+        return f'A NearEarthObject ... designation={self.designation!r}, name={self.name!r}, ' \
+               f'diameter={self.diameter:.3f}, hazardous={self.hazardous!r})'
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
