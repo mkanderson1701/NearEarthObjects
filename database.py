@@ -11,7 +11,7 @@ data on NEOs and close approaches extracted by `extract.load_neos` and
 
 You'll edit this file in Tasks 2 and 3.
 """
-
+import time
 
 class NEODatabase:
     """A database of near-Earth objects and their close approaches.
@@ -43,13 +43,20 @@ class NEODatabase:
         self._approaches = approaches
 
         # TODO: What additional auxiliary data structures will be useful?
-        # mapping of designation to a set of approaches
-        #
-        # approachSets {
-        #   pdes1: {obj, obj, obj}
-        #   pdes2: {obj, obj}
-        #   ...
-        # }
+
+        # dict of neos with a non-empty name property
+        # basically a hash table
+        self._neos_named = {}
+        for neo in neos:
+            if not neo.name == None and not neo.name == '':
+                self._neos_named[neo.name] = neo
+
+        # sort neos by designation
+        print('sorting...')
+        t1 = time.perf_counter()
+        self._neos.sort(key=lambda x: x.designation)
+        t2 = time.perf_counter()
+        print(f'sort complete in {t1-t2:0.6f} seconds')
 
         # TODO: Link together the NEOs and their close approaches.
         for approach in approaches:
@@ -95,10 +102,12 @@ class NEODatabase:
         if name == None or name == '':
             return None
         # name = name.lower()
-        for neo in self._neos:
-            if neo.name == name:
-                return neo
-        return None
+        # this returns None if not in dictionary, which is fine
+        try:
+            return self._neos_named[name]
+        except:
+            return None
+
 
     def query(self, filters=()):
         """Query close approaches to generate those that match a collection of filters.

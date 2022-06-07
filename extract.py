@@ -14,6 +14,7 @@ You'll edit this file in Task 2.
 """
 import csv
 import json
+import time
 
 from models import NearEarthObject, CloseApproach
 
@@ -30,10 +31,13 @@ def load_neos(neo_csv_path):
         reader = csv.reader(file)
         next(reader)
         count = 0
+        t1 = time.perf_counter()
         for neo in reader:
             neo_list.append(NearEarthObject(pdes=neo[3], full_name=neo[2], name=neo[4], diameter=neo[15], pha=neo[7]))
             count += 1
-        print('count of neos: ' + str(count))
+        t2 = time.perf_counter()
+        print(f'csv load complete in {t1-t2:0.6f} seconds')
+        print('neos loaded: ' + str(count))
     return neo_list
 
 
@@ -48,8 +52,11 @@ def load_approaches(cad_json_path):
     with open(cad_json_path, 'r') as file:
         cadData = json.load(file)
         count = 0
+        t1 = time.perf_counter()
         for approach in cadData['data']:
             cad_list.append(CloseApproach(des=str(approach[0]), cd=str(approach[3]), dist_min=float(approach[5]), v_rel=float(approach[7])))
             count += 1
-        print('count of approaches: ' + str(count))
+        t2 = time.perf_counter()
+        print(f'json load complete in {t1-t2:0.6f} seconds')
+        print('approaches loaded: ' + str(count))
     return cad_list
