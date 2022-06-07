@@ -188,7 +188,7 @@ class CloseApproach:
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
         #return f'At {datetime_to_str(self.time)}, {self.full_name} approaches Earth at a distance of ' \
-        return f'At {datetime_to_str(self.time)}, this object approaches Earth at a distance of ' \
+        return f'{datetime_to_str(self.time)}, {self._designation} ({self.neo.diameter} km diameter) approaches at a distance of ' \
             f'{self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s. '
 
     def __repr__(self):

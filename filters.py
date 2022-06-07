@@ -72,6 +72,73 @@ class AttributeFilter:
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
+class DistanceFilter(AttributeFilter):
+    def __init__(self, op, value):
+        super().__init__(op, value)
+    
+    def __call__(self, approach):
+        return self.op(approach.distance, self.value)
+
+    @classmethod
+    def get(cls, approach):
+        return approach.distance
+
+    @classmethod
+    def validateDist(cls, val):
+        try:
+            val = float(val)
+        except UnsupportedCriterionError as err:
+            print('distance filter could not be converted to float', err)
+        return val
+            
+
+class DateFilter(AttributeFilter):
+    def __init__(self, op, value):
+        super().__init__(op, value)
+    
+    def __call__(self, approach):
+        return self.op(approach.time.date(), self.value)
+
+    @classmethod
+    def get(cls, approach):
+        return approach.time.date()
+
+
+class VelocityFilter(AttributeFilter):
+    def __init__(self, op, value):
+        super().__init__(op, value)
+    
+    def __call__(self, approach):
+        return self.op(approach.velocity, self.value)
+
+    @classmethod
+    def get(cls, approach):
+        return approach.velocity
+
+
+class DiameterFilter(AttributeFilter):
+    def __init__(self, op, value):
+        super().__init__(op, value)
+    
+    def __call__(self, approach):
+        return self.op(approach.neo.diameter, self.value)
+
+    @classmethod
+    def get(cls, approach):
+        return approach.neo.diameter
+
+class HazardFilter(AttributeFilter):
+    def __init__(self, op, value):
+        super().__init__(op, value)
+    
+    def __call__(self, approach):
+        return self.op(approach.neo.hazardous, self.value)
+
+    @classmethod
+    def get(cls, approach):
+        return approach.neo.hazardous
+
+
 def create_filters(
         date=None, start_date=None, end_date=None,
         distance_min=None, distance_max=None,
@@ -79,6 +146,35 @@ def create_filters(
         diameter_min=None, diameter_max=None,
         hazardous=None
 ):
+    filters = []
+    
+    if distance_min:
+        distance_min = DistanceFilter.validateDist(distance_min)
+        filters.append(DistanceFilter(operator.ge, distance_min))
+    if distance_max:
+        distance_max = DistanceFilter.validateDist(distance_max)
+        filters.append(DistanceFilter(operator.le, distance_max))
+    if date:
+        filters.append(DateFilter(operator.eq, date))
+    if start_date:
+        filters.append(DateFilter(operator.gt, start_date))
+    if end_date:
+        filters.append(DateFilter(operator.lt, end_date))
+    if velocity_min:
+        filters.append(VelocityFilter(operator.gt, velocity_min))
+    if velocity_max:
+        filters.append(VelocityFilter(operator.lt, velocity_max))
+    if diameter_min:
+        filters.append(DiameterFilter(operator.gt, diameter_min))
+    if diameter_max:
+        filters.append(DiameterFilter(operator.lt, diameter_max))
+    if hazardous:
+        
+
+    print('filters is now: ' + str(filters))
+
+    print('distance min: ' + str(distance_min))
+    
     """Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
@@ -109,7 +205,7 @@ def create_filters(
     :return: A collection of filters for use with `query`.
     """
     # TODO: Decide how you will represent your filters.
-    return ()
+    return filters
 
 
 def limit(iterator, n=None):

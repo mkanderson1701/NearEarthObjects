@@ -13,6 +13,41 @@ You'll edit this file in Tasks 2 and 3.
 """
 import time
 
+ 
+def binarySearch(arr, l, r, x):
+    """
+    Recursive binary search implementation found at:
+
+    https://www.geeksforgeeks.org/binary-search/ 
+    
+    A recursive binary search function. It returns
+    location of x in given array arr[l..r] is present,
+    otherwise -1 
+    """
+
+     # Check base case
+    if r >= l:
+        mid = l + (r - l) // 2
+
+        # If element is present at the middle itself
+        if arr[mid] == x:
+            return mid
+
+        # If element is smaller than mid, then it
+        # can only be present in left subarray
+        elif arr[mid] > x:
+            return binarySearch(arr, l, mid-1, x)
+
+        # Else the element can only be present
+        # in right subarray
+        else:
+            return binarySearch(arr, mid + 1, r, x)
+ 
+    else:
+        # Element is not present in the array
+        return -1
+
+
 class NEODatabase:
     """A database of near-Earth objects and their close approaches.
 
@@ -42,8 +77,10 @@ class NEODatabase:
         self._neos = neos
         self._approaches = approaches
 
-        # TODO: What additional auxiliary data structures will be useful?
+        # Additional data structures and optimizations
 
+        # _neos_named
+        # 
         # dict of neos with a non-empty name property
         # basically a hash table
         self._neos_named = {}
@@ -52,19 +89,53 @@ class NEODatabase:
                 self._neos_named[neo.name] = neo
 
         # sort neos by designation
+        # permit binary search against designation 
         print('sorting...')
         t1 = time.perf_counter()
         self._neos.sort(key=lambda x: x.designation)
         t2 = time.perf_counter()
-        print(f'sort complete in {t1-t2:0.6f} seconds')
+        print(f'sort complete in {t2-t1:0.6f} seconds')
 
-        # TODO: Link together the NEOs and their close approaches.
+        # neos designation index array. for fast search. designations only.
+        neo_designations = []
+        for neo in self._neos:
+            neo_designations.append(neo.designation)
+        neo_designations_len = len(neo_designations) - 1
+
+        self._approach_des_dict = {}
+        t1 = time.perf_counter()
         for approach in approaches:
-            for neo in neos:
-                if neo.designation == approach._designation:
-                    neo.approaches.append(approach)
-                    approach.neo = neo
-                    break
+            # first, create dictionary / hash table
+            # {designation (str) : [list of approach objects]}
+            if approach._designation in self._approach_des_dict:
+                self._approach_des_dict[approach._designation].append(approach)
+            else:
+                self._approach_des_dict[approach._designation] = [approach]
+            neoIndex = binarySearch(neo_designations, 0, neo_designations_len, approach._designation)
+            approach.neo = self._neos[neoIndex]
+            self._neos[neoIndex].approaches.append(approach)
+            # since we're iterating over approaches
+            # also add link to neo and vice versa
+        t2 = time.perf_counter()
+        print(f'approach-des-dict complete in {t2-t1:0.6f} seconds')
+
+        #print(self._neos[0])
+        #print(self._neos[0].approaches)
+
+        # This takes forever, trying something else
+        # t1 = time.perf_counter()
+        # count = 0
+        # for approach in approaches:
+        #     for neo in neos:
+        #         if neo.designation == approach._designation:
+        #             neo.approaches.append(approach)
+        #             approach.neo = neo
+        #             break
+        #     count += 1
+        #     if count % 100 == 0:
+        #         print(count)
+        # t2 = time.perf_counter()
+        # print(f'linking complete in {t2-t1:0.6f} seconds')
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -125,4 +196,11 @@ class NEODatabase:
         """
         # TODO: Generate `CloseApproach` objects that match all of the filters.
         for approach in self._approaches:
-            yield approach
+            passedFilters = True
+            for filter in filters:
+                # print('filter: ' + str(filter))
+                if not filter(approach):
+                    passedFilters = False
+            if passedFilters:
+                yield approach
+
