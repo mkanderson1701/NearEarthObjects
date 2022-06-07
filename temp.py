@@ -24,7 +24,7 @@ def cadProcessor():
         cadData = json.load(file)
         approachData = cadData['data']
 
-    dateMatch = [approach for approach in approachData if approach[3].startswith('2000-Jan-01')]
+    dateMatch = [approach for approach in approachData if approach[7].count('t')]
     for approach in dateMatch:
         print(approach)
 
