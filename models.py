@@ -63,7 +63,7 @@ class NearEarthObject:
         if not info['name']:
             self.name = None
         else:
-            self.name = info['name'].strip()
+            self.name = info['name'].strip().replace('"', '')
         if info['diameter']:
             self.diameter = float(info['diameter'])
         else:
@@ -137,13 +137,16 @@ class CloseApproach:
         # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
         # You should coerce these values to their appropriate data type and handle any edge cases.
         # The `cd_to_datetime` function will be useful.
-        self._designation = info['des'].strip()
+        
         self.time = cd_to_datetime(info['cd'])
         self.distance = float(info['dist_min'])
         self.velocity = float(info['v_rel'])
 
         # Create an attribute for the referenced NEO, originally None.
         self.neo = None
+
+        # This is used until neo can be populated with an object ref
+        self._designation = info['des'].strip()
 
     @property
     def temp_designation(self):
