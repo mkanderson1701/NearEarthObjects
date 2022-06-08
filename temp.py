@@ -1,31 +1,25 @@
-import csv
-import json
+from itertools import islice
 
-def neoCounter():
-    with open('./data/neos.csv', 'r') as file:
-        reader = csv.DictReader(file)
-        countName = 0
-        countDiam = 0
-        for neo in reader:
-            if neo['name'] != '':
-                print(neo['name'])
-                countName += 1
-            if neo['diameter'] != '':
-                print(neo['diameter'])
-                countDiam += 1
-      
-    print('total is ' + str(countName) + ' named.')
-    print('total is ' + str(countDiam) + ' with a diameter.')
+def limit(iterator, n=None):
+    if n == None or n == 0:
+        return iterator
+    count = 0
+    while count < n:
+        try: 
+            count += 1
+            yield next(iterator)
+        except StopIteration:
+            count = n
+            
+def limit_two(iterator, n=None):
+    if n == 0:
+        n = None
+    for item in islice(iterator, 0, None):
+        yield item
+ 
+shit = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+#shitit = iter(shit)
+bullshit = limit_two(shit, n=15)
 
-# neoCounter()
-
-def cadProcessor():
-    with open('./data/cad.json', 'r') as file:
-        cadData = json.load(file)
-        approachData = cadData['data']
-
-    dateMatch = [approach for approach in approachData if approach[7].count('t')]
-    for approach in dateMatch:
-        print(approach)
-
-cadProcessor()
+for num in bullshit:
+    print(num)

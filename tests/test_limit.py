@@ -12,6 +12,7 @@ These tests should pass when Task 3c is complete.
 import collections.abc
 import unittest
 
+from itertools import islice
 from filters import limit
 
 

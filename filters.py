@@ -17,7 +17,10 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
+from itertools import islice
+import logging, sys
 
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
 class UnsupportedCriterionError(NotImplementedError):
     """A filter criterion is unsupported."""
@@ -200,6 +203,8 @@ def create_filters(
     if not hazardous == None:
         filters.append(HazardFilter(operator.eq, hazardous))
 
+    logging.info('filters: ' + str(filters))
+
     return filters
 
 
@@ -212,8 +217,19 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
+    if n == 0:
+        n = None
+    for item in islice(iterator, 0, n):
+        yield item
+
     
-    if n == None or n == 0:
-        return iterator
-    for _ in range(n):
-        yield next(iterator)
+    # if n == None or n == 0:
+    #     yield next(iterator)
+    # count = 0
+    # while count < n:
+    #     try: 
+    #         count += 1
+    #         yield next(iterator)
+    #     except StopIteration:
+    #         count = n
+

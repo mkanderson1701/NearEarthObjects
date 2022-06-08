@@ -29,13 +29,10 @@ def write_to_csv(results, filename):
         'designation', 'name', 'diameter_km', 'potentially_hazardous'
     )
     # TODO: Write the results to a CSV file, following the specification in the instructions.
-    with open(filename, mode='w') as csvfile:
+    with open(filename, mode='w', newline='') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-       # print(results)
-       # print('write header')
-        #filewriter.writerow(fieldnames)
+        filewriter.writerow(fieldnames)
         for approach in results:
-            #print('result')
             filewriter.writerow(approach.csvIter)
 
 
