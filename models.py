@@ -19,7 +19,7 @@ You'll edit this file in Task 1.
 """
 
 import cmath
-
+import math
 from numpy import NAN
 
 from helpers import cd_to_datetime, datetime_to_str
@@ -188,10 +188,36 @@ class CloseApproach:
         # The project instructions include one possibility. Peek at the __repr__
         # method for examples of advanced string formatting.
         #return f'At {datetime_to_str(self.time)}, {self.full_name} approaches Earth at a distance of ' \
-        return f'{datetime_to_str(self.time)}, {self._designation} ({self.neo.diameter} km diameter) approaches at a distance of ' \
-            f'{self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s. '
+        if not math.isnan(self.neo.diameter):
+            return f'{datetime_to_str(self.time)}, {self._designation} ({self.neo.diameter} km diameter) approaches at a distance of ' \
+                f'{self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s. '
+        else:
+            return f'{datetime_to_str(self.time)}, {self._designation} (diameter unknown) approaches at a distance of ' \
+                f'{self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s. '
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
         return f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, " \
                f"velocity={self.velocity:.2f}, neo={self.neo!r})"
+    
+    @property
+    def csvIter(self):
+        if self.neo.name:
+            exportName = self.neo.name
+        else:
+            exportName = ''
+
+        if math.isnan(self.neo.diameter):
+            exportDiam = ''
+        else:
+            exportDiam = self.neo.diameter
+
+        return (
+            self.time,
+            self.distance,
+            self.velocity,
+            self.neo.designation,
+            exportName,
+            exportDiam,
+            self.neo.hazardous
+        )
