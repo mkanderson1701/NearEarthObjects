@@ -146,35 +146,6 @@ def create_filters(
         diameter_min=None, diameter_max=None,
         hazardous=None
 ):
-    filters = []
-    
-    if distance_min:
-        distance_min = DistanceFilter.validateDist(distance_min)
-        filters.append(DistanceFilter(operator.ge, distance_min))
-    if distance_max:
-        distance_max = DistanceFilter.validateDist(distance_max)
-        filters.append(DistanceFilter(operator.le, distance_max))
-    if date:
-        filters.append(DateFilter(operator.eq, date))
-    if start_date:
-        filters.append(DateFilter(operator.gt, start_date))
-    if end_date:
-        filters.append(DateFilter(operator.lt, end_date))
-    if velocity_min:
-        filters.append(VelocityFilter(operator.gt, velocity_min))
-    if velocity_max:
-        filters.append(VelocityFilter(operator.lt, velocity_max))
-    if diameter_min:
-        filters.append(DiameterFilter(operator.gt, diameter_min))
-    if diameter_max:
-        filters.append(DiameterFilter(operator.lt, diameter_max))
-    if hazardous:
-        
-
-    print('filters is now: ' + str(filters))
-
-    print('distance min: ' + str(distance_min))
-    
     """Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
@@ -204,7 +175,31 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
+    filters = []
+    
+    if distance_min:
+        distance_min = DistanceFilter.validateDist(distance_min)
+        filters.append(DistanceFilter(operator.ge, distance_min))
+    if distance_max:
+        distance_max = DistanceFilter.validateDist(distance_max)
+        filters.append(DistanceFilter(operator.le, distance_max))
+    if date:
+        filters.append(DateFilter(operator.eq, date))
+    if start_date:
+        filters.append(DateFilter(operator.gt, start_date))
+    if end_date:
+        filters.append(DateFilter(operator.lt, end_date))
+    if velocity_min:
+        filters.append(VelocityFilter(operator.gt, velocity_min))
+    if velocity_max:
+        filters.append(VelocityFilter(operator.lt, velocity_max))
+    if diameter_min:
+        filters.append(DiameterFilter(operator.gt, diameter_min))
+    if diameter_max:
+        filters.append(DiameterFilter(operator.lt, diameter_max))
+    if not hazardous == None:
+        filters.append(HazardFilter(operator.eq, hazardous))
+
     return filters
 
 
@@ -217,5 +212,8 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    
+    if n == None or n == 0:
+        return iterator
+    for _ in range(n):
+        yield next(iterator)

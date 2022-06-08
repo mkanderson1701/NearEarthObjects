@@ -227,9 +227,9 @@ def query(database, args):
     else:
         # Write the results to a file.
         if args.outfile.suffix == '.csv':
-            write_to_csv(limit(results, args.limit), args.outfile)
+            write_to_csv(limit(results, args.limit or 0), args.outfile)
         elif args.outfile.suffix == '.json':
-            write_to_json(limit(results, args.limit), args.outfile)
+            write_to_json(limit(results, args.limit or 0), args.outfile)
         else:
             print("Please use an output file that ends with `.csv` or `.json`.", file=sys.stderr)
 

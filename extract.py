@@ -25,19 +25,20 @@ def load_neos(neo_csv_path):
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
+    print('Loading NEO and approach data...')
     neo_list = []
 
     with open(neo_csv_path, 'r') as file:
         reader = csv.reader(file)
         next(reader)
         count = 0
-        t1 = time.perf_counter()
+        # t1 = time.perf_counter()
         for neo in reader:
             neo_list.append(NearEarthObject(pdes=neo[3], full_name=neo[2], name=neo[4], diameter=neo[15], pha=neo[7]))
             count += 1
-        t2 = time.perf_counter()
-        print(f'csv load complete in {t1-t2:0.6f} seconds')
-        print('neos loaded: ' + str(count))
+        # t2 = time.perf_counter()
+        # print(f'csv load complete in {t2-t1:0.6f} seconds')
+        # print('neos loaded: ' + str(count))
     return neo_list
 
 
@@ -52,11 +53,11 @@ def load_approaches(cad_json_path):
     with open(cad_json_path, 'r') as file:
         cadData = json.load(file)
         count = 0
-        t1 = time.perf_counter()
+        # t1 = time.perf_counter()
         for approach in cadData['data']:
             cad_list.append(CloseApproach(des=str(approach[0]), cd=str(approach[3]), dist_min=float(approach[5]), v_rel=float(approach[7])))
             count += 1
-        t2 = time.perf_counter()
-        print(f'json load complete in {t1-t2:0.6f} seconds')
-        print('approaches loaded: ' + str(count))
+        # t2 = time.perf_counter()
+        # print(f'json load complete in {t2-t1:0.6f} seconds')
+        # print('approaches loaded: ' + str(count))
     return cad_list

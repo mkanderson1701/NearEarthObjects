@@ -76,6 +76,7 @@ class NEODatabase:
         """
         self._neos = neos
         self._approaches = approaches
+        print('Building database...\n')
 
         # Additional data structures and optimizations
 
@@ -90,11 +91,11 @@ class NEODatabase:
 
         # sort neos by designation
         # permit binary search against designation 
-        print('sorting...')
-        t1 = time.perf_counter()
+        # print('sorting...')
+        # t1 = time.perf_counter()
         self._neos.sort(key=lambda x: x.designation)
-        t2 = time.perf_counter()
-        print(f'sort complete in {t2-t1:0.6f} seconds')
+        # t2 = time.perf_counter()
+        # print(f'sort complete in {t2-t1:0.6f} seconds')
 
         # neos designation index array. for fast search. designations only.
         neo_designations = []
@@ -103,7 +104,7 @@ class NEODatabase:
         neo_designations_len = len(neo_designations) - 1
 
         self._approach_des_dict = {}
-        t1 = time.perf_counter()
+        #t1 = time.perf_counter()
         for approach in approaches:
             # first, create dictionary / hash table
             # {designation (str) : [list of approach objects]}
@@ -116,8 +117,8 @@ class NEODatabase:
             self._neos[neoIndex].approaches.append(approach)
             # since we're iterating over approaches
             # also add link to neo and vice versa
-        t2 = time.perf_counter()
-        print(f'approach-des-dict complete in {t2-t1:0.6f} seconds')
+        #t2 = time.perf_counter()
+        #print(f'approach-des-dict complete in {t2-t1:0.6f} seconds')
 
         #print(self._neos[0])
         #print(self._neos[0].approaches)
@@ -198,7 +199,6 @@ class NEODatabase:
         for approach in self._approaches:
             passedFilters = True
             for filter in filters:
-                # print('filter: ' + str(filter))
                 if not filter(approach):
                     passedFilters = False
             if passedFilters:

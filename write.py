@@ -29,6 +29,16 @@ def write_to_csv(results, filename):
         'designation', 'name', 'diameter_km', 'potentially_hazardous'
     )
     # TODO: Write the results to a CSV file, following the specification in the instructions.
+    with open(filename, mode='w') as file:
+        filewriter = csv.writer(file, delimiter=',', quotechar='"')
+        print('RESULTS')
+        print('write header')
+        filewriter.writerow(fieldnames)
+        for approach in results:
+            print('result')
+            filewriter.writerow(approach)
+
+
 
 
 def write_to_json(results, filename):
