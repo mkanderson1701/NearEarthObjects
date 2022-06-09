@@ -1,6 +1,6 @@
 import time
 
- 
+
 def binarySearch(arr, l, r, x):
     """
     This is useful after the neo list is sorted by designation.
@@ -62,14 +62,13 @@ class NEODatabase:
 
         # sort neos by designation
         # permits binary search against designations 
-        # t1 = time.perf_counter()
+
         self._neos.sort(key=lambda x: x.designation)
-        # t2 = time.perf_counter()
-        # print(f'sort complete in {t2-t1:0.6f} seconds')
 
         # neos designation array. for fast search against designations.
         #
         # I can do a binary search against this list then match the index to the full object collection.
+        
         self.neo_designations = []
         for neo in self._neos:
             self.neo_designations.append(neo.designation)
@@ -77,11 +76,13 @@ class NEODatabase:
 
         # This dict will have one index per NEO
         # Each index then has a list of matching approaches.
+
         self._approach_des_dict = {}
         for approach in approaches:
-            # first, create dictionary / hash table
+
+            # create dictionary / hash table
             # {designation (str) : [list of approach objects]}
-            #
+
             # If index (designation) already exists, append
             if approach._designation in self._approach_des_dict:
                 self._approach_des_dict[approach._designation].append(approach)
@@ -106,7 +107,7 @@ class NEODatabase:
         neoIndex = binarySearch(self.neo_designations, 0, 
             self.neo_designations_len, designation)
         if neoIndex != -1:
-            return self._neos[neoIndex]
+            return self._neos[neoIndex] # works because _neos is sorted and mated to neo_designations
 
 
     def get_neo_by_name(self, name):
@@ -125,19 +126,6 @@ class NEODatabase:
 
 
     def query(self, filters=()):
-        """Query close approaches to generate those that match a collection of filters.
-
-        This generates a stream of `CloseApproach` objects that match all of the
-        provided filters.
-
-        If no arguments are provided, generate all known close approaches.
-
-        The `CloseApproach` objects are generated in internal order, which isn't
-        guaranteed to be sorted meaningfully, although is often sorted by time.
-
-        :param filters: A collection of filters capturing user-specified criteria.
-        :return: A stream of matching `CloseApproach` objects.
-        """
         for approach in self._approaches:
             passedFilters = True
             # eliminate this approach if it doesn't pass a filter
