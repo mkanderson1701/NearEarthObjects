@@ -44,7 +44,9 @@ class NEODatabase:
         :param neos: A collection of `NearEarthObject`s.
         :param approaches: A collection of `CloseApproach`es.
         """
-        self._neos = neos
+        self._neos = list(neos) # needs to be a list so I can sort it.
+                        # test_write should NOT explicitly pass a tuple here, it's the only module that does.
+
         self._approaches = approaches
         print('Building database...\n')
 
