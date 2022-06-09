@@ -1,36 +1,34 @@
 import time
 
-
-def binarySearch(arr, l, r, x):
+def binarySearch(arr, left, right, search):
     """
     This is useful after the neo list is sorted by designation.
 
     Simple recursive binary search implementation found at:
 
-    https://www.geeksforgeeks.org/binary-search/ 
-    
+    https://www.geeksforgeeks.org/binary-search/
+
     A recursive binary search function. It returns
-    location of x in given array arr[l..r] is present,
+    location of x in given array arr[left..right] is present,
     otherwise -1 
     """
 
-     # Check base case
-    if r >= l:
-        mid = l + (r - l) // 2
+    if right >= left:
+        mid = left + (right - left) // 2
 
         # If element is present at the middle itself
-        if arr[mid] == x:
+        if arr[mid] == search:
             return mid
 
         # If element is smaller than mid, then it
         # can only be present in left subarray
-        elif arr[mid] > x:
-            return binarySearch(arr, l, mid-1, x)
+        elif arr[mid] > search:
+            return binarySearch(arr, left, mid-1, search)
 
         # Else the element can only be present
         # in right subarray
         else:
-            return binarySearch(arr, mid + 1, r, x)
+            return binarySearch(arr, mid + 1, right, search)
  
     else:
         # Element is not present in the array
