@@ -1,13 +1,5 @@
-I had to modify the test_write.py unit test slightly.
+I am surprised you would reject the whole project because I pointed out a pretty basic, very simple issue with one of the unit tests.
 
-It assumes that load_neos and load_approaches will return tuples, and I already had some dependencies on these returning list objects. One of them gets sorted in place.
+I mean, you have the original files in your github. Nevertheless, I put the originals back in my repository for you. I now recast the input as a list in my database function. It causes mysterious errors in the file_write.py unit test (it's more like the unit test crashes your database) if you aren't expecting this undocumented requirement that you expect tuples as input parameters for the database. Because this one unit test invokes the database differently than every other piece of code, for no reason at all.
 
-Somewhere around line 40 in test_write.py this:
-
-    neos = tuple(load_neos(TEST_NEO_FILE))
-    approaches = tuple(load_approaches(TEST_CAD_FILE))
-
-became this:
-
-    neos = list(load_neos(TEST_NEO_FILE))
-    approaches = list(load_approaches(TEST_CAD_FILE))
+The instructions also say to use NaN in the JSON where diameter is empty. NaN is NOT a valid type in JSON. Also that's not what your unit tests look for, so maybe straighten that bit out.
