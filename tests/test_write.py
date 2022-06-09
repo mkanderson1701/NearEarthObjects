@@ -36,18 +36,8 @@ TEST_CAD_FILE = TESTS_ROOT / 'test-cad-2020.json'
 
 
 def build_results(n):
-    # mkanderson71 
-    #
-    # Modified here. No other test or requirement indicates that load_neos must return a tuple.
-    # I use a sort on the approaches so I can use binary search, not compatible with tuples
-    #
-    # OLD:
-    # neos = tuple(load_neos(TEST_NEO_FILE))
-    # approaches = tuple(load_approaches(TEST_CAD_FILE))
-    #
-    # NEW:
-    neos = list(load_neos(TEST_NEO_FILE))
-    approaches = list(load_approaches(TEST_CAD_FILE))
+    neos = tuple(load_neos(TEST_NEO_FILE))
+    approaches = tuple(load_approaches(TEST_CAD_FILE))
 
     # Only needed to link together these objects.
     NEODatabase(neos, approaches)
