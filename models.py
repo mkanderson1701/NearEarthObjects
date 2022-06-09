@@ -37,8 +37,7 @@ class NearEarthObject:
     initialized to an empty collection, but eventually populated in the
     `NEODatabase` constructor.
     """
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
+
     def __init__(self, **info):
         """Create a new `NearEarthObject`.
 
@@ -53,11 +52,7 @@ class NearEarthObject:
 
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `designation`, `name`, `diameter`, and `hazardous`.
-        # You should coerce these values to their appropriate data type and
-        # handle any edge cases, such as a empty name being represented by `None`
-        # and a missing diameter being represented by `float('nan')`.
+
         self.designation = info['pdes'].strip()
         self.full_name = info['full_name'].strip()
         if not info['name']:
@@ -79,14 +74,11 @@ class NearEarthObject:
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        # TODO: Use self.designation and self.name to build a fullname for this object.
         return f'{self.full_name}'
 
     def __str__(self):
         """Return `str(self)`."""
-        # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
+        # Returns a human-readable string representation
         if self.hazardous:
             isNot = ''
         else:
@@ -120,8 +112,7 @@ class CloseApproach:
     private attribute, but the referenced NEO is eventually replaced in the
     `NEODatabase` constructor.
     """
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
+
     def __init__(self, **info):
         """Create a new `CloseApproach`.
 
@@ -132,12 +123,7 @@ class CloseApproach:
         v_rel (float) km/s velocity rel to approach body at close approach 
 
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
-        """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
-        # You should coerce these values to their appropriate data type and handle any edge cases.
-        # The `cd_to_datetime` function will be useful.
-        
+        """       
         self.time = cd_to_datetime(info['cd'])
         self.distance = float(info['dist_min'])
         self.velocity = float(info['v_rel'])
@@ -200,24 +186,62 @@ class CloseApproach:
         return f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, " \
                f"velocity={self.velocity:.2f}, neo={self.neo!r})"
     
+    # Suitable for CSV
     @property
-    def csvIter(self):
+    def exportName(self):
         if self.neo.name:
-            exportName = self.neo.name
+            return self.neo.name
         else:
-            exportName = ''
+            return '""'
 
-        if math.isnan(self.neo.diameter):
-            exportDiam = ''
+    # Suitable for JSON
+    @property
+    def exportJsonName(self):
+        if self.neo.name:
+            return f'{self.neo.name}'
         else:
-            exportDiam = self.neo.diameter
+            return str('')
 
+
+    # Suitable for CSV
+    @property
+    def exportDiam(self):
+        if math.isnan(self.neo.diameter) or self.neo.diameter == None:
+            return '""'
+        else:
+            return self.neo.diameter
+
+    # Suitable for JSON
+    @property
+    def exportJsonDiam(self):
+        if math.isnan(self.neo.diameter) or self.neo.diameter == None:
+            return float(0)
+        else:
+            return self.neo.diameter
+
+    # this returns a collection suitable for dumping straight in to CSV writer
+    @property
+    def csvMaker(self):
         return (
-            self.time,
+            self.time.strftime("%Y-%m-%d %H:%M"),
             self.distance,
             self.velocity,
             self.neo.designation,
-            exportName,
-            exportDiam,
+            self.exportName,
+            self.exportDiam,
             self.neo.hazardous
         )
+    
+    # This returns a dict ready to be added to JSON
+    @property
+    def jsonMaker(self):
+        return {'datetime_utc': self.time.strftime("%Y-%m-%d %H:%M"),
+            'distance_au': self.distance,
+            'velocity_km_s': self.velocity,
+            'neo': {
+                'designation': self.neo.designation,
+                'name': self.exportJsonName,
+                'diameter_km': self.exportJsonDiam,
+                'potentially_hazardous': self.neo.hazardous
+            }
+        }

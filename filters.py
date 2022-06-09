@@ -189,21 +189,19 @@ def create_filters(
     if date:
         filters.append(DateFilter(operator.eq, date))
     if start_date:
-        filters.append(DateFilter(operator.gt, start_date))
+        filters.append(DateFilter(operator.ge, start_date))
     if end_date:
-        filters.append(DateFilter(operator.lt, end_date))
+        filters.append(DateFilter(operator.le, end_date))
     if velocity_min:
-        filters.append(VelocityFilter(operator.gt, velocity_min))
+        filters.append(VelocityFilter(operator.ge, velocity_min))
     if velocity_max:
-        filters.append(VelocityFilter(operator.lt, velocity_max))
+        filters.append(VelocityFilter(operator.le, velocity_max))
     if diameter_min:
-        filters.append(DiameterFilter(operator.gt, diameter_min))
+        filters.append(DiameterFilter(operator.ge, diameter_min))
     if diameter_max:
-        filters.append(DiameterFilter(operator.lt, diameter_max))
+        filters.append(DiameterFilter(operator.le, diameter_max))
     if not hazardous == None:
         filters.append(HazardFilter(operator.eq, hazardous))
-
-    logging.info('filters: ' + str(filters))
 
     return filters
 
@@ -217,19 +215,10 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
+    # Used islice as recommended
     if n == 0:
         n = None
     for item in islice(iterator, 0, n):
         yield item
 
-    
-    # if n == None or n == 0:
-    #     yield next(iterator)
-    # count = 0
-    # while count < n:
-    #     try: 
-    #         count += 1
-    #         yield next(iterator)
-    #     except StopIteration:
-    #         count = n
 
